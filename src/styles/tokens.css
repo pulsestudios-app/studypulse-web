@@ -1,0 +1,56 @@
+/*
+ * Design tokens mirrored from the phone app's dark theme (src/shared/theme.ts,
+ * copied from StudyPulse src/theme/*). tokens.test.ts fails if these drift.
+ */
+:root {
+  /* colorsDark */
+  --color-background: #0D0D0D;
+  --color-surface: #1A1A1A;
+  --color-border: #2A2A2A;
+  --color-primary: #58CC02;
+  --color-lime: #58CC02;
+  --color-sky: #1CB0F6;
+  --color-yellow: #FFD93D;
+  --color-coral: #FF6F61;
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #B3B3B3;
+  /* Hard-coded in the phone's Button.tsx for labels on lime. */
+  --color-on-primary: #0D0D0D;
+
+  /* Tints: phone appends a hex alpha to accent colors (e.g. `${lime}30`). */
+  --tint-lime-10: #58CC0210;
+  --tint-lime-30: #58CC0230;
+  --tint-sky-12: #1CB0F612;
+  --tint-yellow-18: #FFD93D18;
+  --tint-coral-18: #FF6F6118;
+
+  /* spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-xxl: 32px;
+
+  /* radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* typography (phone uses the platform system font; no custom fonts) */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, Menlo, Consolas, monospace;
+  --type-header-size: 28px;
+  --type-header-weight: 800;
+  --type-header-tracking: 0.2px;
+  --type-title-size: 20px;
+  --type-title-weight: 700;
+  --type-title-tracking: 0.1px;
+  --type-body-size: 16px;
+  --type-body-weight: 400;
+  --type-body-line: 24px;
+  --type-caption-size: 13px;
+  --type-caption-weight: 500;
+  --type-caption-line: 18px;
+}
