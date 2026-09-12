@@ -3,8 +3,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { LIBRARY_LIST_COLUMNS, type LibraryRow } from "../library/libraryApi";
 import { supabase } from "../lib/supabase";
 
-export const TRASH_RETENTION_DAYS = 30;
+import { TRASH_RETENTION_DAYS, withoutRow } from "./trashLogic";
 
+export { daysUntilPurge, TRASH_RETENTION_DAYS, withoutRow } from "./trashLogic";
 export type TrashRow = LibraryRow & { deleted_at: string };
 
 /** Phone library/api.ts listTrashedSavedResults: last 30 days, newest deletion first (lean columns). */
@@ -47,19 +48,6 @@ export async function permanentlyDelete(userId: string, id: string): Promise<voi
   if (error) {
     throw error;
   }
-}
-
-/** Phone trash.tsx getDaysUntilPurge: ceil of days until deleted_at + 30 days, floored at 0. */
-export function daysUntilPurge(deletedAt: string, now = new Date()): number {
-  const deleted = new Date(deletedAt);
-  const purgeDate = new Date(deleted);
-  purgeDate.setDate(purgeDate.getDate() + TRASH_RETENTION_DAYS);
-  const daysLeft = Math.ceil((purgeDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-  return Math.max(0, daysLeft);
-}
-
-export function withoutRow<T extends { id: string }>(rows: T[], id: string): T[] {
-  return rows.filter((row) => row.id !== id);
 }
 
 export const trashKey = (userId: string) => ["trash", userId] as const;

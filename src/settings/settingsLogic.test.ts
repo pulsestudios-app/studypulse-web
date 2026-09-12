@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 
 import type { ResultShare } from "../results/generationApi";
-import { canConfirmDeletion } from "./accountApi";
-import { isShareInactive, markRevoked, shareMeta } from "./sharesApi";
-import { daysUntilPurge, withoutRow } from "./trashApi";
+import { canConfirmDeletion } from "./accountLogic";
+import { isShareInactive, markRevoked, shareMeta } from "./sharesLogic";
+import { daysUntilPurge, withoutRow } from "./trashLogic";
 
 const share = (over: Partial<ResultShare> = {}): ResultShare => ({
   id: "s1",

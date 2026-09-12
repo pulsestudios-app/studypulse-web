@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { DueReviewCard } from "../shared/reviewKeys";
-import { filterDueCards, joinReviewCards, nextReviewRow } from "../shared/reviewQueue";
+import { filterDueCards, joinReviewCards, nextReviewRow } from "../shared/reviewQueueLogic";
 import { initialReviewSession, REVIEW_RATINGS, reviewKeyCommand, reviewReducer } from "./reviewSession";
 
 const card = (id: string, front: string, review: DueReviewCard["review"] = null): DueReviewCard => ({
