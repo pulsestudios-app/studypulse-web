@@ -61,6 +61,12 @@ Desktop: media player + transcript on the left, study tabs (`#summary`, `#flashc
   `script-src 'self'`).
 - **Transcript** — grouped bubbles, speaker colours, `m:ss` timestamps that seek the player, active
   bubble + karaoke word highlighting from `word_timings` (phone math, copied in `src/shared`).
+  **YouTube** uses the phone's separate sync path (`src/shared/youtubeSync.ts`,
+  `src/shared/youtubeTimePredictor.ts`): integer-second → segment map (boundary seconds belong to
+  the later caption), the index only changes when the mapped segment changes, highlight hidden
+  unless the player is playing/paused/buffering, sentence-split estimated timings for a zero-timed
+  blob, no karaoke, lime speaker rail. The iframe adapter samples the player every 80 ms and
+  predicts frames in between (velocity + offset), like the phone's `YouTubePlayer`.
 - **Generation** — same `POST /v1/…` endpoints and bodies as the phone; plan gates are the server's
   403s plus the phone's tab copy. Generated quiz, flashcards, mind map and regenerated summary are
   written back to the row (`persist*` in `generationApi.ts`) so phone and web read the same data.

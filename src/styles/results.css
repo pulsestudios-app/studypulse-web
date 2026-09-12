@@ -152,33 +152,44 @@
 }
 
 /* ---------- Transcript ---------- */
+/* Phone [jobId].tsx transcriptSegmentPlain / transcriptSegmentActive / transcriptWord, verbatim tokens. */
 .transcript {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
 }
 .transcript-empty,
 .transcript-note {
-  margin: 0;
+  margin: 0 0 var(--space-sm);
 }
 .transcript-bubble {
-  border-left: 3px solid var(--color-border);
-  padding: var(--space-xs) 0 var(--space-xs) var(--space-sm);
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-  transition: background 120ms ease;
+  margin-bottom: 6px;
+  padding: 8px 8px 8px 8px;
+  background: var(--color-surface);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  border-left-width: 3px;
+  border-left-color: var(--color-border);
 }
 .transcript-bubble-active {
-  background: var(--tint-lime-10);
+  background: rgba(88, 204, 2, 0.08);
+  border-width: 1.5px;
+  border-left-width: 3px;
+  border-color: var(--color-lime);
 }
-.transcript-meta {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  font-size: 11px;
-  line-height: 16px;
+.transcript-line {
+  margin: 0;
+  font-size: 15px;
+  line-height: 19px;
+  color: var(--color-text-primary);
+  cursor: pointer;
 }
 .transcript-speaker {
+  font-size: 11px;
   font-weight: 700;
+}
+.transcript-speaker-row {
+  display: block;
+  margin-bottom: 4px;
 }
 .transcript-time {
   background: none;
@@ -188,29 +199,33 @@
   font-size: 11px;
   cursor: pointer;
   font-variant-numeric: tabular-nums;
+  white-space: pre;
 }
 .transcript-time:hover:not(:disabled) {
-  color: var(--color-lime);
   text-decoration: underline;
 }
 .transcript-time:disabled {
   cursor: default;
 }
-.transcript-bubble-active .transcript-time {
+.transcript-time.is-active {
   color: var(--color-lime);
-}
-.transcript-text {
-  margin: 2px 0 0;
-  font-size: 15px;
-  line-height: 23px;
-}
-.transcript-segment {
-  cursor: pointer;
 }
 .karaoke-word {
   background: none;
   color: var(--color-lime);
   font-weight: 600;
+}
+.transcript-youtube-note {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: rgba(28, 176, 246, 0.1);
+  border: 1px solid var(--color-sky);
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 8px;
+  color: var(--color-sky);
+  font-size: 12px;
 }
 
 /* ---------- Tabs ---------- */

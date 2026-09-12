@@ -7,6 +7,8 @@ import { COPY } from "../copy";
 import { formatClock } from "../transcript/activeSegment";
 import { classifyMediaSource, isVideoPath, type MediaSource } from "./mediaSource";
 import { IDLE_PLAYBACK, type PlaybackController, type PlaybackState } from "./playback";
+import { youtubeStatusFromState } from "../../shared/youtubeSync";
+import { YOUTUBE_POLL_INTERVAL_MS, YoutubeTimePredictor } from "../../shared/youtubeTimePredictor";
 import { resolveMediaUrl } from "./resolveMediaUrl";
 import {
   parseYoutubeMessage,
@@ -173,15 +175,37 @@ function HtmlMediaPlayer({
   );
 }
 
-/** Drives the embed with the IFrame API's postMessage protocol; no external script under CSP. */
+/**
+ * Drives the embed with the IFrame API's postMessage protocol (no external script under CSP) and
+ * reproduces the phone's YouTubePlayer time signal: the player's time is sampled every 80 ms while
+ * playing, and every animation frame in between publishes a predicted time
+ * (last sample + elapsed × velocity + calibrated offset) — src/shared/youtubeTimePredictor.ts.
+ * The bridge round-trip the phone measures does not exist here (infoDelivery is pushed), so the
+ * delay sample is the age of the latest push when it is read.
+ */
 function YoutubePlayer({ videoId, onState, handleRef }: { videoId: string; onState: Props["onState"]; handleRef?: Ref<MediaPlayerHandle> }) {
   const frameRef = useRef<HTMLIFrameElement | null>(null);
-  const [state, setState] = useState<PlaybackState>({ positionMs: 0, durationMs: 0, playing: false, available: true });
+  const predictor = useRef(new YoutubeTimePredictor());
+  const latest = useRef<{ time: number; at: number } | null>(null);
+  const listeners = useRef(new Set<(seconds: number) => void>());
+  const [state, setState] = useState<PlaybackState>({ positionMs: 0, durationMs: 0, playing: false, available: true, youtubeStatus: "unstarted" });
   const embedUrl = useMemo(() => youtubeEmbedUrl(videoId, window.location.origin), [videoId]);
 
   const post = useCallback((message: string) => {
     frameRef.current?.contentWindow?.postMessage(message, YOUTUBE_EMBED_ORIGIN);
   }, []);
+
+  const emit = useCallback((seconds: number) => {
+    for (const listener of listeners.current) {
+      listener(seconds);
+    }
+  }, []);
+
+  // Phone: reset calibration on video change.
+  useEffect(() => {
+    predictor.current.reset();
+    latest.current = null;
+  }, [videoId]);
 
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
@@ -192,16 +216,51 @@ function YoutubePlayer({ videoId, onState, handleRef }: { videoId: string; onSta
       if (!info) {
         return;
       }
+      if (info.currentTime !== undefined) {
+        latest.current = { time: info.currentTime, at: performance.now() };
+      }
+      if (info.playerState !== undefined) {
+        predictor.current.playerState = info.playerState;
+      }
       setState((prev) => ({
         positionMs: info.currentTime !== undefined ? Math.floor(info.currentTime * 1000) : prev.positionMs,
         durationMs: info.duration !== undefined ? Math.floor(info.duration * 1000) : prev.durationMs,
         playing: info.playerState !== undefined ? info.playerState === YOUTUBE_STATE_PLAYING : prev.playing,
         available: true,
+        youtubeStatus: info.playerState !== undefined ? youtubeStatusFromState(info.playerState) : prev.youtubeStatus,
       }));
     };
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
   }, []);
+
+  // Phone polling loop (80 ms) + prediction loop (RAF), both only while playing.
+  useEffect(() => {
+    if (!state.playing) {
+      return;
+    }
+    const interval = window.setInterval(() => {
+      const sample = latest.current;
+      if (predictor.current.playerState !== 1 || !sample) {
+        return;
+      }
+      const now = performance.now();
+      emit(predictor.current.poll(sample.time, (now - sample.at) / 1000, now));
+    }, YOUTUBE_POLL_INTERVAL_MS);
+    let raf = 0;
+    const tick = () => {
+      const predicted = predictor.current.predict(performance.now());
+      if (predicted !== null) {
+        emit(predicted);
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => {
+      window.clearInterval(interval);
+      cancelAnimationFrame(raf);
+    };
+  }, [state.playing, emit]);
 
   const seek = useCallback(
     (seconds: number, play = false) => {
@@ -217,11 +276,16 @@ function YoutubePlayer({ videoId, onState, handleRef }: { videoId: string; onSta
     [post],
   );
 
+  const subscribeTime = useCallback((listener: (seconds: number) => void) => {
+    listeners.current.add(listener);
+    return () => void listeners.current.delete(listener);
+  }, []);
+
   useImperativeHandle(handleRef, () => ({ seek }), [seek]);
 
   useEffect(() => {
-    onState({ ...state, seek });
-  }, [state, seek, onState]);
+    onState({ ...state, seek, subscribeTime });
+  }, [state, seek, subscribeTime, onState]);
 
   return (
     <div className="media-youtube">

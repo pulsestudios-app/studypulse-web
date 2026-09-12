@@ -9,6 +9,7 @@ export const COPY = {
   transcript: {
     empty: "No transcript yet.",
     youtubeSpeakers: "Speaker labels available for uploaded files only.",
+    youtubeTapSeekUnavailable: "Tap-to-seek not available for this video. Upload the file for word-level sync.",
     speakerFallback: "Speaker",
   },
   summary: {
