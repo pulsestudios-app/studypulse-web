@@ -1,4 +1,4 @@
-// Copied from pulsestudios-app/StudyPulse@700c3d8 (launch-ota): src/features/processing/mindMapTypes.ts
+// Copied from pulsestudios-app/StudyPulse@e06fff9 (launch-ota): src/features/processing/mindMapTypes.ts
 // Keep in sync manually — no monorepo coupling. Changes vs source: none.
 
 export type MindMapSubBranch = {

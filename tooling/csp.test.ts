@@ -38,6 +38,11 @@ describe("buildCsp", () => {
     expect(directive("object-src")).toEqual(["'none'"]);
   });
 
+  it("allows media from Supabase storage and YouTube embeds only as frames", () => {
+    expect(directive("media-src")).toEqual(["'self'", "blob:", "https://uhfavszrclwwwnimxsbr.supabase.co"]);
+    expect(directive("frame-src")).toEqual(["https://www.youtube-nocookie.com"]);
+  });
+
   it("only allows YouTube thumbnails as remote images", () => {
     expect(directive("img-src")).toEqual(["'self'", "data:", "https://img.youtube.com"]);
   });

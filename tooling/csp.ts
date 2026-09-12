@@ -36,6 +36,11 @@ export function buildCsp(input: CspInput): string {
     }
   }
 
+  // Media plays from signed Supabase Storage URLs; YouTube embeds are driven over postMessage (no script).
+  const media = ["'self'", "blob:"];
+  if (supabase) {
+    media.push(supabase);
+  }
   const directives: Record<string, string[]> = {
     "default-src": ["'self'"],
     "script-src": ["'self'"],
@@ -43,6 +48,8 @@ export function buildCsp(input: CspInput): string {
     "img-src": ["'self'", "data:", "https://img.youtube.com"],
     "font-src": ["'self'"],
     "connect-src": [...connect],
+    "media-src": media,
+    "frame-src": ["https://www.youtube-nocookie.com"],
     "object-src": ["'none'"],
     "base-uri": ["'self'"],
     "form-action": ["'self'"],

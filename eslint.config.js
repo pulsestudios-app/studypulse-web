@@ -27,7 +27,9 @@ export default tseslint.config(
     // Verbatim copies from the phone repo; unused parameters there are not ours to fix.
     files: ["src/shared/**/*.ts"],
     rules: {
-      "@typescript-eslint/no-unused-vars": ["error", { args: "none" }],
+      "@typescript-eslint/no-unused-vars": "off",
+      "prefer-const": "off",
+      "no-useless-assignment": "off",
     },
   },
   {

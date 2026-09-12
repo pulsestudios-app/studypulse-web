@@ -12,7 +12,8 @@ import { AppShell } from "./components/AppShell";
 import { CrashFallback, NotFoundPage } from "./components/NotFoundPage";
 import { LibraryPage } from "./library/LibraryPage";
 import { queryClient } from "./lib/queryClient";
-import { ResultPlaceholderPage } from "./results/ResultPlaceholderPage";
+import { ResultPage } from "./results/ResultPage";
+import { ReviewStubPage } from "./review/ReviewStubPage";
 import { SettingsPage } from "./settings/SettingsPage";
 
 const router = createBrowserRouter([
@@ -42,7 +43,8 @@ const router = createBrowserRouter([
         children: [
           { path: "library", element: <LibraryPage /> },
           { path: "settings", element: <SettingsPage /> },
-          { path: "results/:id", element: <ResultPlaceholderPage /> },
+          { path: "results/:id", element: <ResultPage /> },
+          { path: "review", element: <ReviewStubPage /> },
         ],
       },
     ],

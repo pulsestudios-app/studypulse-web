@@ -6,7 +6,8 @@ import { config } from "./config";
 import { sanitizePostHogEvent } from "./privacy";
 import { ANALYTICS_OPT_OUT_KEY, readStorage, STORAGE_PREFIX, writeStorage } from "./storage";
 
-export type WebAnalyticsEvent = "web_session_started" | "web_sign_in";
+/** Web-only events plus the phone's event names reused where the action is the same. */
+export type WebAnalyticsEvent = "web_session_started" | "web_sign_in" | "chat_message_sent" | "share_created";
 export type WebSignInMethod = "password" | "google" | "email_link";
 
 const SESSION_STARTED_KEY = `${STORAGE_PREFIX}analytics.sessionStarted`;

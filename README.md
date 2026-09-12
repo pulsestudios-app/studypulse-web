@@ -6,8 +6,10 @@ Static Vite + React + TypeScript SPA, deployed to GitHub Pages by GitHub Actions
 same Supabase project (Auth + RLS, anon key only) and the same Railway API as the phone app. There is
 no server of its own and **no service-role key anywhere**.
 
-Phase 1 scope: sign-in / sign-up / password reset, library list, plan + minutes, settings.
-Not in phase 1: recording, focus music, purchases (billing shows the plan and "Manage on your phone").
+Scope so far: sign-in / sign-up / password reset, library list, plan + minutes, settings (slice 1);
+result viewer with media playback, transcript, summary, flashcards, quiz, chat, mind map and share
+links (slice 2). Not on the web: recording, uploads, focus music, purchases (billing shows the plan and
+"Manage on your phone"), spaced-repetition review (`/review` is a stub).
 
 ## Develop
 
@@ -42,7 +44,29 @@ See [.env.example](.env.example). CI reads them from GitHub **repository Variabl
 | `/auth/sign-in`, `/auth/sign-up` | public (redirects to the app if signed in) |
 | `/auth/reset` | public — request a reset link, or set a new password when opened with `?code=` |
 | `/auth/callback` | public — Google OAuth + email-confirmation landing (PKCE code exchange) |
-| `/library`, `/settings`, `/results/:id` | session required |
+| `/library`, `/settings`, `/results/:id`, `/review` | session required |
+
+## Result viewer (`/results/:id`)
+
+Desktop: media player + transcript on the left, study tabs (`#summary`, `#flashcards`, `#quiz`,
+`#chat`, `#mindmap`) on the right; under 960px everything stacks and the transcript becomes a tab.
+
+- **Row** — one `saved_results` row via RLS with an explicit column list (`src/results/resultParse.ts`);
+  every JSON column is parsed per element with the phone's tolerances (string `correctIndex`,
+  `sub_branches`, null columns, empty-segment synthesis).
+- **Media** — `source_media_uri` is classified (`recording://`, `uploads/…` key, persisted storage URL,
+  phone-local path, YouTube) and signed directly with Supabase Storage for an hour, like the phone.
+  Phone-local files show "Audio is on your phone". YouTube plays in a `youtube-nocookie.com` iframe
+  driven over the IFrame API postMessage protocol — no YouTube script is loaded (CSP stays
+  `script-src 'self'`).
+- **Transcript** — grouped bubbles, speaker colours, `m:ss` timestamps that seek the player, active
+  bubble + karaoke word highlighting from `word_timings` (phone math, copied in `src/shared`).
+- **Generation** — same `POST /v1/…` endpoints and bodies as the phone; plan gates are the server's
+  403s plus the phone's tab copy. Generated quiz, flashcards, mind map and regenerated summary are
+  written back to the row (`persist*` in `generationApi.ts`) so phone and web read the same data.
+- **Chat** — `POST /v1/chat`, non-streaming; hydrated from `conversation_history` (server-written,
+  client writes are reverted by a trigger). The free limit is the server's `CHAT_LIMIT_REACHED`.
+- **Share** — `POST /v1/shares` (summary / flashcards / quiz), URL copied to the clipboard.
 
 Auth is Supabase PKCE with `detectSessionInUrl: false`; the callback/reset pages exchange the code
 explicitly. PKCE means a reset or confirmation link must be opened **in the same browser** that
