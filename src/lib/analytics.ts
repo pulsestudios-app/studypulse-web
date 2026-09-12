@@ -7,7 +7,15 @@ import { sanitizePostHogEvent } from "./privacy";
 import { ANALYTICS_OPT_OUT_KEY, readStorage, STORAGE_PREFIX, writeStorage } from "./storage";
 
 /** Web-only events plus the phone's event names reused where the action is the same. */
-export type WebAnalyticsEvent = "web_session_started" | "web_sign_in" | "chat_message_sent" | "share_created";
+export type WebAnalyticsEvent =
+  | "web_session_started"
+  | "web_sign_in"
+  | "chat_message_sent"
+  | "share_created"
+  | "share_revoked"
+  | "review_session_started"
+  | "review_session_completed"
+  | "account_deleted";
 export type WebSignInMethod = "password" | "google" | "email_link";
 
 const SESSION_STARTED_KEY = `${STORAGE_PREFIX}analytics.sessionStarted`;

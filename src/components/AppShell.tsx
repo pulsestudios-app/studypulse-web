@@ -7,6 +7,8 @@ import { identifyUser, trackSessionStarted } from "../lib/analytics";
 import { signOut } from "../lib/appState";
 import { PlanBadge } from "../profile/PlanBadge";
 import { useProfile } from "../profile/useProfile";
+import { COPY } from "../results/copy";
+import { useDueCount } from "../review/useDueCount";
 import { Icon } from "./Icon";
 import { Logo } from "./Logo";
 
@@ -14,6 +16,8 @@ export function AppShell() {
   const session = useSession();
   const userId = session.user.id;
   const { profile, summary, isLoading } = useProfile(userId);
+  const due = useDueCount(userId);
+  const dueCount = due.data ?? 0;
 
   useEffect(() => {
     // The user reached the app: any stored post-sign-in destination / recovery marker is spent.
@@ -39,6 +43,11 @@ export function AppShell() {
             <NavLink to="/library" className="app-nav-link">
               <Icon name="library" size={18} />
               <span>Library</span>
+            </NavLink>
+            <NavLink to="/review" className="app-nav-link">
+              <Icon name="cards" size={18} />
+              <span>Review</span>
+              {dueCount > 0 ? <span className="due-badge">{COPY.review.due(dueCount)}</span> : null}
             </NavLink>
             <NavLink to="/settings" className="app-nav-link">
               <Icon name="settings" size={18} />

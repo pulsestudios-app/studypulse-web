@@ -5,7 +5,7 @@ import { supabase } from "./supabase";
 export { BackendError };
 
 /** Authenticated call to the Railway API with the same headers the phone sends. */
-export async function backendFetch<T>(path: string, init: { method: "GET" | "POST"; body?: unknown }): Promise<T> {
+export async function backendFetch<T>(path: string, init: { method: "GET" | "POST" | "DELETE"; body?: unknown }): Promise<T> {
   const {
     data: { session },
   } = await supabase.auth.getSession();

@@ -875,3 +875,224 @@
     display: none;
   }
 }
+
+/* ---------- Review (phone app/review.tsx) ---------- */
+.review {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.review-title {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+.review-card {
+  width: 100%;
+  min-height: 300px;
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  text-align: center;
+  cursor: pointer;
+  color: var(--color-text-primary);
+}
+.review-deck {
+  color: var(--color-sky);
+  font-size: 12px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+.review-prompt {
+  font-size: 22px;
+  line-height: 30px;
+  font-weight: 700;
+}
+.review-answer {
+  font-size: 18px;
+  line-height: 26px;
+}
+.review-reveal {
+  background: var(--color-lime);
+  color: var(--color-background);
+  font-weight: 800;
+  padding: 13px 24px;
+  border-radius: var(--radius-md);
+}
+.review-ratings {
+  display: flex;
+  gap: 8px;
+}
+.review-rating {
+  flex: 1;
+  min-height: 48px;
+  border-radius: var(--radius-md);
+  border: 1px solid;
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.review-rating kbd {
+  font-size: 10px;
+  opacity: 0.7;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  padding: 0 4px;
+}
+.review-rating:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.review-hint {
+  text-align: center;
+  margin: 0;
+}
+.review-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-md);
+  padding: var(--space-xxl) var(--space-xl);
+}
+.review-empty p {
+  margin: 0;
+}
+.review-check {
+  color: var(--color-lime);
+}
+.due-badge {
+  border-radius: 999px;
+  background: var(--color-lime);
+  color: var(--color-on-primary);
+  font-size: 11px;
+  font-weight: 800;
+  padding: 1px 7px;
+  line-height: 16px;
+}
+.library-heading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+/* ---------- Settings: shares, trash, danger ---------- */
+.settings-hint {
+  margin: calc(var(--space-sm) * -1) 0 0;
+}
+.settings-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-xs);
+  padding: var(--space-xl);
+  color: var(--color-text-secondary);
+}
+.settings-empty strong {
+  color: var(--color-text-primary);
+  font-size: 19px;
+  font-weight: 800;
+}
+.share-list,
+.trash-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.share-row,
+.trash-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-background);
+}
+.share-row.is-inactive .share-row-title {
+  color: var(--color-text-secondary);
+}
+.share-row-body,
+.trash-row-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.share-row-title,
+.trash-row-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.trash-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background: rgba(255, 59, 48, 0.1);
+  color: #ff3b30;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.trash-banner {
+  margin: 0;
+  display: flex;
+  gap: 10px;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+.trash-empty-emoji {
+  font-size: 48px;
+}
+.btn-destructive {
+  background: rgba(255, 59, 48, 0.15);
+  border-color: rgba(255, 59, 48, 0.35);
+  color: #ff3b30;
+}
+.settings-danger {
+  border-color: rgba(255, 59, 48, 0.35);
+}
+.dialog-actions {
+  justify-content: flex-end;
+}
+@media (max-width: 720px) {
+  .share-row,
+  .trash-row {
+    flex-wrap: wrap;
+  }
+  .review-ratings {
+    flex-wrap: wrap;
+  }
+  .review-rating {
+    flex-basis: 45%;
+  }
+}

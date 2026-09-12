@@ -11,6 +11,10 @@ export type IconName =
   | "chevron-left"
   | "chevron-right"
   | "logout"
+  | "check"
+  | "link"
+  | "trash"
+  | "cards"
   | "google";
 
 const PATHS: Record<Exclude<IconName, "google">, string> = {
@@ -26,6 +30,10 @@ const PATHS: Record<Exclude<IconName, "google">, string> = {
   "chevron-left": "M15.4 5.4 14 4l-8 8 8 8 1.4-1.4L8.8 12l6.6-6.6z",
   "chevron-right": "M8.6 5.4 10 4l8 8-8 8-1.4-1.4 6.6-6.6-6.6-6.6z",
   logout: "M10 3h9a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-9v-2h9V5h-9V3zM7.6 7.6 9 9l-2 2h8v2H7l2 2-1.4 1.4L3.2 12l4.4-4.4z",
+  check: "M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zm-1.3 13.6 6.3-6.3-1.4-1.4-4.9 4.9-2.3-2.3L7 11.9l3.7 3.7z",
+  link: "M10.6 13.4a1 1 0 0 1 0 1.4l-1.2 1.2a4 4 0 0 1-5.7-5.7l2.8-2.8a4 4 0 0 1 5.7 0l.7.7-1.4 1.4-.7-.7a2 2 0 0 0-2.9 0L5.1 11.7a2 2 0 0 0 2.9 2.9l1.2-1.2a1 1 0 0 1 1.4 0zm2.8-2.8a1 1 0 0 1 0-1.4l1.2-1.2a4 4 0 0 1 5.7 5.7l-2.8 2.8a4 4 0 0 1-5.7 0l-.7-.7 1.4-1.4.7.7a2 2 0 0 0 2.9 0l2.8-2.8a2 2 0 0 0-2.9-2.9l-1.2 1.2a1 1 0 0 1-1.4 0z",
+  trash: "M9 3h6l1 2h4v2H4V5h4l1-2zm-3 6h12l-1 11a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L6 9zm4 2v9h2v-9h-2zm4 0v9h2v-9h-2z",
+  cards: "M4 6h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm0 2v9h12V8H4zm16-3v11h-2V5H7V3h11a2 2 0 0 1 2 2z",
 };
 
 export function Icon({ name, size = 20, className }: { name: IconName; size?: number; className?: string }) {

@@ -7,6 +7,8 @@ import { useDocumentTitle } from "../components/useDocumentTitle";
 import { displayTitle, formatDate, formatDuration, sourceTypeLabel } from "./format";
 import { useLibraryPage, type LibraryRow } from "./libraryApi";
 import { libraryHref, normalizeSearch, parsePageParam } from "./pagination";
+import { COPY } from "../results/copy";
+import { useDueCount } from "../review/useDueCount";
 import { Thumbnail } from "./Thumbnail";
 
 const SEARCH_DEBOUNCE_MS = 250;
@@ -22,6 +24,8 @@ export function LibraryPage() {
   const [draft, setDraft] = useState(search);
   const [syncedSearch, setSyncedSearch] = useState(search);
   const listTop = useRef<HTMLDivElement>(null);
+  const due = useDueCount(session.user.id);
+  const dueCount = due.data ?? 0;
 
   // Keep the input in sync with back/forward navigation without clobbering in-progress
   // typing (e.g. a trailing space). Adjusting state during render, per React docs.
@@ -55,7 +59,20 @@ export function LibraryPage() {
   return (
     <div className="library">
       <div className="library-header" ref={listTop}>
-        <h1 className="type-header">Library</h1>
+        <div className="library-heading">
+          <h1 className="type-header">Library</h1>
+          <div className="row-actions">
+            <Link to="/review" className="btn btn-small">
+              <Icon name="cards" size={16} />
+              Review
+              {dueCount > 0 ? <span className="due-badge">{COPY.review.due(dueCount)}</span> : null}
+            </Link>
+            <Link to="/settings#trash" className="btn btn-small" title="Trash">
+              <Icon name="trash" size={16} />
+              Trash
+            </Link>
+          </div>
+        </div>
         <label className="library-search">
           <Icon name="search" size={18} className="library-search-icon" />
           <span className="visually-hidden">Search your library by title</span>

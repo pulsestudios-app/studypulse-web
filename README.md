@@ -8,8 +8,10 @@ no server of its own and **no service-role key anywhere**.
 
 Scope so far: sign-in / sign-up / password reset, library list, plan + minutes, settings (slice 1);
 result viewer with media playback, transcript, summary, flashcards, quiz, chat, mind map and share
-links (slice 2). Not on the web: recording, uploads, focus music, purchases (billing shows the plan and
-"Manage on your phone"), spaced-repetition review (`/review` is a stub).
+links (slice 2); spaced-repetition review, shared-link management, trash, sign-out-everywhere and
+account deletion (slice 3). Not on the web: recording, uploads, focus music, purchases (billing shows
+the plan and "Manage on your phone"), review reminders (the phone schedules a local notification; the
+browser has no equivalent without a push server).
 
 ## Develop
 
@@ -45,6 +47,22 @@ See [.env.example](.env.example). CI reads them from GitHub **repository Variabl
 | `/auth/reset` | public — request a reset link, or set a new password when opened with `?code=` |
 | `/auth/callback` | public — Google OAuth + email-confirmation landing (PKCE code exchange) |
 | `/library`, `/settings`, `/results/:id`, `/review` | session required |
+
+## Review (`/review`)
+
+The phone's due queue (`src/shared/reviewQueue.ts`, copied from `src/features/review/api.ts`): every
+flashcard of every non-trashed result, joined to `card_reviews` by `flashcardKey(front, back)`; a
+card with no row is due immediately, otherwise `due_at <= now`. `?savedResultId=` scopes to one deck.
+Ratings run the phone's SM-2 (`src/shared/sm2.ts`) and upsert `card_reviews` via RLS. Keyboard: Space /
+Enter show the answer, 1–4 rate. The nav and Library show "N due" from the same count.
+
+## Settings
+
+Plan + minutes, email, sign out (this browser / everywhere), analytics opt-out, **Shared links**
+(`GET/DELETE /v1/shares`, revoke with confirmation, revoked rows stay as "Inactive"), **Trash**
+(30-day window via RLS, Restore, Delete Forever — with a confirmation the phone doesn't have — and
+Empty Trash; recordings are phone-only), and **Delete account** (`DELETE /v1/account` with
+`confirmText: "DELETE"`, which schedules deletion 24 h out, then a global sign-out).
 
 ## Result viewer (`/results/:id`)
 
