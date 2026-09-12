@@ -1,18 +1,8 @@
-import { readBackendErrorBody } from "./backendErrors";
+import { BackendError, readBackendErrorBody } from "./backendErrors";
 import { config } from "./config";
 import { supabase } from "./supabase";
 
-export class BackendError extends Error {
-  readonly status: number;
-  readonly code: string | null;
-
-  constructor(message: string, status: number, code: string | null = null) {
-    super(message);
-    this.name = "BackendError";
-    this.status = status;
-    this.code = code;
-  }
-}
+export { BackendError };
 
 /** Authenticated call to the Railway API with the same headers the phone sends. */
 export async function backendFetch<T>(path: string, init: { method: "GET" | "POST"; body?: unknown }): Promise<T> {

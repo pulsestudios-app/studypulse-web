@@ -1,3 +1,16 @@
+/** Thrown by backendFetch for non-2xx responses. Lives here (no Supabase import) so tests stay config-free. */
+export class BackendError extends Error {
+  readonly status: number;
+  readonly code: string | null;
+
+  constructor(message: string, status: number, code: string | null = null) {
+    super(message);
+    this.name = "BackendError";
+    this.status = status;
+    this.code = code;
+  }
+}
+
 /** Mirrors the phone's readBackendError: `{ error: string }` or `{ error: { code, message } }`. */
 export function readBackendErrorBody(body: unknown, fallback: string): { message: string; code: string | null } {
   if (!body || typeof body !== "object") {

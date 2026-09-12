@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { BackendError } from "../lib/backend";
+import { BackendError } from "../lib/backendErrors";
 import { COPY } from "./copy";
-import { classifyBackendError } from "./generationApi";
+import { classifyBackendError } from "./errorClassify";
 import { shareAvailability } from "./shareAvailability";
 
 describe("classifyBackendError (phone throwFromBackendError + friendlyAiErrorMessage)", () => {
