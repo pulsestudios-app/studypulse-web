@@ -29,6 +29,8 @@ export const PROFILE_PLAN_COLUMNS = [
   "usage_month",
   "bonus_minutes",
   "transcription_limit_minutes",
+  // A Lifetime owner whose later subscription ended (needs migration 20261021010000).
+  "lifetime_owned",
 ].join(",");
 
 export type PlanSummary = {
