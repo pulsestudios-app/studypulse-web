@@ -1,5 +1,7 @@
 // Copied from pulsestudios-app/StudyPulse@700c3d8 (launch-ota): src/features/billing/profilePlan.ts
 // Keep in sync manually — no monorepo coupling. Changes vs source: import paths only.
+// Updated 2026-10-21 to match the phone: Lifetime has Student features, and a Lifetime
+// owner whose later subscription ended is on Lifetime (feature/no-speech-phone-only).
 
 import type { ProfileLike } from "./billingCycle";
 import { getNextResetDateFromProfile } from "./billingCycle";
@@ -71,6 +73,10 @@ export function getEffectivePlan(profile: ProfileRecord): EffectivePlan {
   if (isOnTrial(profile)) {
     return "pro";
   }
+  // A Lifetime owner whose later subscription ended is on Lifetime, never Free.
+  if (profile?.lifetime_owned === true) {
+    return "lifetime";
+  }
   return "free";
 }
 
@@ -139,6 +145,8 @@ export function getPlanTranscriptionLimitMinutes(profile: ProfileRecord): number
         return 45;
       case "student":
       case "semester":
+      // Lifetime has Student features.
+      case "lifetime":
         return 600;
       case "pro":
       case "yearly":
@@ -146,7 +154,6 @@ export function getPlanTranscriptionLimitMinutes(profile: ProfileRecord): number
       case "pro_weekly":
         return 100;
       case "unlimited":
-      case "lifetime":
         return 999999;
       default:
         return 15;
@@ -163,13 +170,13 @@ export function getMaxConcurrentJobs(profile: ProfileRecord): number {
       return 1;
     case "student":
     case "semester":
+    case "lifetime":
       return 2;
     case "pro":
     case "pro_weekly":
     case "yearly":
       return 3;
     case "unlimited":
-    case "lifetime":
       return 5;
     default:
       return 1;
@@ -182,14 +189,13 @@ export function getRecommendedUpgrade(currentPlan: EffectivePlan): UpgradeTarget
       return "student";
     case "student":
     case "semester":
+    case "lifetime":
       return "pro";
     case "pro":
     case "yearly":
     case "pro_weekly":
       return "unlimited";
     case "unlimited":
-      return "lifetime";
-    case "lifetime":
       return null;
     default:
       return "student";
@@ -316,10 +322,9 @@ const UNLIMITED_FEATURES: readonly string[] = [
 ];
 
 const LIFETIME_FEATURES: readonly string[] = [
-  "Unlimited everything forever",
-  "Advanced AI",
-  "Never pay again",
-  "All future features included",
+  "All Student features",
+  "600 minutes every month, forever",
+  "One payment",
 ];
 
 /** Bullet list describing plan capabilities (for upgrade UI and tooling). */
