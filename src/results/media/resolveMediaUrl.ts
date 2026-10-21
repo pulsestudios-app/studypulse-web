@@ -1,6 +1,6 @@
 import { supabase } from "../../lib/supabase";
 import { COPY } from "../copy";
-import { storagePathBelongsToUser, type MediaSource } from "./mediaSource";
+import { isMissingStorageObject, MEDIA_ON_PHONE_ONLY, storagePathBelongsToUser, type MediaSource } from "./mediaSource";
 
 /** Phone `resolveRecordingMediaUri`: sign directly with Supabase Storage for one hour. */
 export const SIGNED_URL_TTL_SECONDS = 3600;
@@ -16,6 +16,9 @@ export async function resolveMediaUrl(source: MediaSource, userId: string): Prom
     throw new Error("Recording not available for this account.");
   }
   const { data, error } = await supabase.storage.from(source.bucket).createSignedUrl(source.path, SIGNED_URL_TTL_SECONDS);
+  if (source.bucket === "recordings" && isMissingStorageObject(error)) {
+    throw new Error(MEDIA_ON_PHONE_ONLY);
+  }
   if (error || !data?.signedUrl) {
     throw new Error(COPY.media.failed);
   }

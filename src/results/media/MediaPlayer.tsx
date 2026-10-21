@@ -5,7 +5,7 @@ import { Icon } from "../../components/Icon";
 import { config } from "../../lib/config";
 import { COPY } from "../copy";
 import { formatClock } from "../transcript/activeSegment";
-import { classifyMediaSource, isVideoPath, type MediaSource } from "./mediaSource";
+import { classifyMediaSource, isVideoPath, MEDIA_ON_PHONE_ONLY, type MediaSource } from "./mediaSource";
 import { IDLE_PLAYBACK, type PlaybackController, type PlaybackState } from "./playback";
 import { youtubeStatusFromState } from "../../shared/youtubeSync";
 import { YOUTUBE_POLL_INTERVAL_MS, YoutubeTimePredictor } from "../../shared/youtubeTimePredictor";
@@ -132,6 +132,9 @@ function HtmlMediaPlayer({
     });
   };
 
+  if (error === MEDIA_ON_PHONE_ONLY) {
+    return <UnavailableMedia kind="phone-local" onState={onState} />;
+  }
   if (error) {
     return (
       <div className="media-notice notice-error" role="alert">

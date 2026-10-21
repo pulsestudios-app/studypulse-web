@@ -70,6 +70,18 @@ export function storagePathBelongsToUser(source: Extract<MediaSource, { kind: "s
   return parts[ownerIndex] === userId;
 }
 
+/**
+ * The server no longer has this file: a recording with no speech, or a Free
+ * recording past 90 days. The phone that recorded it still has it.
+ */
+export const MEDIA_ON_PHONE_ONLY = "MEDIA_ON_PHONE_ONLY";
+
+/** Supabase Storage's answer when signing a file that isn't there. */
+export function isMissingStorageObject(error: { message?: string; statusCode?: string | number } | null | undefined): boolean {
+  if (!error) return false;
+  return /not.?found/i.test(error.message ?? "") || String(error.statusCode ?? "") === "404";
+}
+
 export function isVideoPath(path: string): boolean {
   return /\.(mp4|mov|avi|mkv|webm|m4v)(\?|$)/i.test(path);
 }

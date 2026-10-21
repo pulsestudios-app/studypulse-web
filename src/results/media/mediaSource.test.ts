@@ -72,3 +72,14 @@ describe("isVideoPath", () => {
     expect(isVideoPath("a/b.m4a")).toBe(false);
   });
 });
+
+describe("recordings the server no longer has", () => {
+  it("a missing file is told apart from a connection error", async () => {
+    const { isMissingStorageObject, MEDIA_ON_PHONE_ONLY } = await import("./mediaSource");
+    expect(MEDIA_ON_PHONE_ONLY).toBe("MEDIA_ON_PHONE_ONLY");
+    expect(isMissingStorageObject({ message: "Object not found", statusCode: "400" })).toBe(true);
+    expect(isMissingStorageObject({ message: "anything", statusCode: 404 })).toBe(true);
+    expect(isMissingStorageObject({ message: "Failed to fetch" })).toBe(false);
+    expect(isMissingStorageObject(null)).toBe(false);
+  });
+});
