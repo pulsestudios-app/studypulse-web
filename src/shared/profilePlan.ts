@@ -145,8 +145,7 @@ export function getPlanTranscriptionLimitMinutes(profile: ProfileRecord): number
         return 45;
       case "student":
       case "semester":
-      // Lifetime has Student features.
-      case "lifetime":
+      case "lifetime": // Lifetime has Student features.
         return 600;
       case "pro":
       case "yearly":
