@@ -180,7 +180,7 @@ export const COPY = {
     scheduled: (at: string) => `Deletion scheduled for ${at}. You have been signed out.`,
   },
   media: {
-    onPhone: "Audio is on your phone",
+    onPhone: "Saved on your phone only",
     onPhoneBody: "This recording is stored on the device that made it. Play it in the StudyPulse app; the transcript is still available here.",
     loading: "Loading media…",
     failed: "Could not load the media. Check your connection and retry.",

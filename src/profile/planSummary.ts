@@ -29,12 +29,14 @@ export const PROFILE_PLAN_COLUMNS = [
   "usage_month",
   "bonus_minutes",
   "transcription_limit_minutes",
+  // A Lifetime owner whose later subscription ended (needs migration 20261021010000).
+  "lifetime_owned",
 ].join(",");
 
 export type PlanSummary = {
   plan: EffectivePlan;
   label: string;
-  /** Unlimited/lifetime show "N min used" instead of a quota (phone profile screen). */
+  /** Unlimited shows "N min used" instead of a quota (phone profile screen); Lifetime has Student's 600. */
   unlimited: boolean;
   usedMinutes: number;
   limitMinutes: number;
@@ -82,7 +84,7 @@ export function summarizePlan(profile: ProfileRecord, now = new Date()): PlanSum
   const trialDaysLeft = isOnTrial(profile) ? getTrialDaysRemaining(profile) : null;
   const resetsOn = getNextResetDateFromProfile(profile);
 
-  if (stored === "unlimited" || stored === "lifetime") {
+  if (stored === "unlimited") {
     const usedMin = asNumber(profile?.minutes_used_this_month, 0);
     const rounded = Math.round(usedMin);
     return {

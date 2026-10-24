@@ -81,15 +81,21 @@ describe("summarizePlan (mirrors phone getMonthlyUsage + profile screen)", () =>
     expect(summarizePlan({ plan: "free", usage_month: "2026-08", minutes_used_this_month: 20 }).usedMinutes).toBe(0);
   });
 
-  it("unlimited/lifetime show minutes used instead of a quota", () => {
-    const s = summarizePlan({ plan: "lifetime", minutes_used_this_month: 1234.4 });
+  it("unlimited shows minutes used instead of a quota", () => {
+    const s = summarizePlan({ plan: "unlimited", subscription_active: true, subscription_status: "active", subscription_expires_at: iso(20), minutes_used_this_month: 1234.4 });
     expect(s).toMatchObject({
       unlimited: true,
-      label: "Lifetime",
       usedMinutes: 1234,
       usedFraction: 0,
       usageLine: `${(1234).toLocaleString()} min used this month`,
     });
+  });
+
+  it("lifetime has Student's 600 minutes, and stays Lifetime after a later subscription ends", () => {
+    const active = summarizePlan({ plan: "lifetime", subscription_active: true, subscription_status: "active", ...activeCycle });
+    expect(active).toMatchObject({ plan: "lifetime", unlimited: false, limitMinutes: 600 });
+    const after = summarizePlan({ plan: "pro", subscription_active: false, subscription_status: "expired", lifetime_owned: true, ...activeCycle });
+    expect(after).toMatchObject({ plan: "lifetime", limitMinutes: 600 });
   });
 
   it("handles a missing profile row", () => {
