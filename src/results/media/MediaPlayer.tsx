@@ -79,6 +79,9 @@ function HtmlMediaPlayer({
   const [attempt, setAttempt] = useState(0);
   const [state, setState] = useState<PlaybackState>({ positionMs: 0, durationMs: 0, playing: false, available: true });
   const isVideo = source.kind === "storage" ? isVideoPath(source.path) : isVideoPath(source.url);
+  /** Where to pick up after a fresh link (bug hunt 4.15, 2026-11-08). */
+  const resumeRef = useRef<{ at: number; play: boolean } | null>(null);
+  const refreshTriesRef = useRef(0);
 
   // The component is keyed by source, so a new source mounts fresh state; retries clear the error themselves.
   useEffect(() => {
@@ -94,11 +97,11 @@ function HtmlMediaPlayer({
           setError(e instanceof Error ? e.message : COPY.media.failed);
         }
       });
-    // Signed URLs expire after an hour; refresh a little before that.
-    const timer = window.setTimeout(() => setAttempt((n) => n + 1), 55 * 60 * 1000);
+    // A signed link lasts an hour. It is no longer swapped on a timer (that restarted a long
+    // lecture at 0:00 every 55 minutes, bug hunt 4.15): a new one is fetched only when
+    // playback fails, and it picks up where it was (see onError / onLoadedMetadata).
     return () => {
       active = false;
-      window.clearTimeout(timer);
     };
   }, [source, session.user.id, attempt]);
 
@@ -163,8 +166,28 @@ function HtmlMediaPlayer({
     onPlay: sync,
     onPause: sync,
     onEnded: sync,
-    onLoadedMetadata: sync,
-    onError: () => setError(COPY.media.failed),
+    onLoadedMetadata: () => {
+      const el = mediaRef.current;
+      const resume = resumeRef.current;
+      if (el && resume) {
+        resumeRef.current = null;
+        el.currentTime = resume.at;
+        if (resume.play) void el.play().catch(() => undefined);
+      }
+      refreshTriesRef.current = 0;
+      sync();
+    },
+    onError: () => {
+      // Most likely the link expired mid-lecture: a fresh one, at the same place (twice at most).
+      const el = mediaRef.current;
+      if (refreshTriesRef.current < 2) {
+        refreshTriesRef.current += 1;
+        resumeRef.current = { at: el?.currentTime ?? 0, play: Boolean(el && !el.paused) };
+        setAttempt((n) => n + 1);
+        return;
+      }
+      setError(COPY.media.failed);
+    },
   };
   return isVideo ? (
     <video ref={(el) => void (mediaRef.current = el)} className="media-video" playsInline {...shared} />
