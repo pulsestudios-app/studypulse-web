@@ -78,10 +78,16 @@ export async function regenerateSummary(
   return { mainIdea, keyPoints };
 }
 
+/**
+ * The last turns only (bug hunt 3.19, 2026-11-08): the server keeps the whole history, and
+ * sending all of it made each question cost more and failed for good past 100 messages.
+ */
+export const CHAT_TURNS_SENT = 20;
+
 export async function sendChat(transcript: string, messages: ChatTurn[], savedResultId: string): Promise<string> {
   const body = await backendFetch<{ response?: unknown }>("/v1/chat", {
     method: "POST",
-    body: { transcript, messages, savedResultId },
+    body: { transcript, messages: messages.slice(-CHAT_TURNS_SENT), savedResultId },
   });
   return typeof body?.response === "string" ? body.response : "";
 }
